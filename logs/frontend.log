@@ -1,0 +1,9 @@
+
+> trust-management-portal-frontend@1.0.0 dev
+> vite --host 127.0.0.1 --host 0.0.0.0
+
+
+  VITE v8.1.2  ready in 115 ms
+
+  ➜  Local:   http://localhost:5173/
+  ➜  Network: http://10.103.114.11:5173/
