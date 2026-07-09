@@ -98,6 +98,26 @@ class AttendanceRead(AttendanceBase):
     member: MemberRead | None = None
 
 
+class StaffAttendanceBase(BaseModel):
+    staff_id: str
+    date: date
+    time: str | None = None
+    status: str
+    remarks: str | None = None
+
+
+class StaffAttendanceCreate(StaffAttendanceBase):
+    pass
+
+
+class StaffAttendanceRead(StaffAttendanceBase):
+    model_config = ConfigDict(from_attributes=True)
+
+    id: int
+    created_at: datetime
+    staff: StaffRead | None = None
+
+
 class StaffBase(BaseModel):
     staff_id: str | None = None
     name: str

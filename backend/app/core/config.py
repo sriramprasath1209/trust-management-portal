@@ -5,7 +5,7 @@ from pydantic_settings import BaseSettings
 
 
 class Settings(BaseSettings):
-    app_name: str = "Trust Management Portal"
+    app_name: str = "SUKI HOMES TRUST"
     database_url: str = "sqlite:///./trust_portal.db"
     secret_key: str = "change-this-secret-in-production"
     algorithm: str = "HS256"

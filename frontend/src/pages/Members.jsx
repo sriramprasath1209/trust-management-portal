@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react'
 import { api } from '../api/client'
 import { Button, Card, Field, PageHeader, inputClass, textareaClass } from '../components/ui'
 
-const blank = { name: '', father_name: '', mother_name: '', gender: 'Female', dob: '', age: '', aadhaar_no: '', pan_no: '', blood_group: 'O+', allergies: '', medical_conditions: '', disability: '', medications: '', phone: '', emergency_name: '', emergency_phone: '', relationship: '', plot_number: '', street: '', area: '', village: '', taluk: '', district: '', state: '', pincode: '', room_number: '', guardian: '', admission_date: new Date().toISOString().slice(0, 10), education: '', occupation: '', current_status: 'Active', notes: '' }
+const blank = { name: '', father_name: '', mother_name: '', gender: 'Female', dob: '', age: '', aadhaar_no: '', pan_no: '', others: '', blood_group: 'O+', allergies: '', medical_conditions: '', disability: '', medications: '', phone: '', emergency_name: '', emergency_phone: '', relationship: '', plot_number: '', street: '', area: '', village: '', taluk: '', district: '', state: '', pincode: '', room_number: '', guardian: '', admission_date: new Date().toISOString().slice(0, 10), education: '', occupation: '', current_status: 'Active', photo: '', notes: '' }
 
 export default function Members() {
   const [members, setMembers] = useState([])
@@ -21,7 +21,21 @@ export default function Members() {
     const payload = cleanPayload(form, ['age'])
     if (selected) await api.put(`/members/${selected}`, payload)
     else await api.post('/members', payload)
-    setForm(blank); setSelected(null); await load()
+    setForm({ ...blank }); setSelected(null); await load()
+  }
+
+  function handlePhotoChange(event) {
+    const file = event.target.files?.[0]
+    if (!file) return
+    const reader = new FileReader()
+    reader.onload = () => {
+      setForm((current) => ({ ...current, photo: reader.result }))
+    }
+    reader.readAsDataURL(file)
+  }
+
+  function removePhoto() {
+    setForm((current) => ({ ...current, photo: '' }))
   }
   async function remove(id) {
     await api.delete(`/members/${id}`)
@@ -45,9 +59,15 @@ export default function Members() {
               <tbody>
                 {members.map((m) => (
                   <tr key={m.member_id} className="border-t border-slate-100 dark:border-slate-800">
-                    <td className="p-3"><div className="h-9 w-9 rounded bg-blue-100" /></td><td>{m.member_id}</td><td>{m.name}</td><td>{m.age}</td><td>{m.blood_group}</td><td>{m.room_number}</td><td>{m.emergency_phone}</td><td>{m.admission_date}</td>
+                    <td className="p-3">
+                      {m.photo ? (
+                        <img src={m.photo} alt={m.name} className="h-9 w-9 rounded object-cover" />
+                      ) : (
+                        <div className="flex h-9 w-9 items-center justify-center rounded bg-blue-100 text-[10px] font-semibold text-blue-700">No Pic</div>
+                      )}
+                    </td><td>{m.member_id}</td><td>{m.name}</td><td>{m.age}</td><td>{m.blood_group}</td><td>{m.room_number}</td><td>{m.emergency_phone}</td><td>{m.admission_date}</td>
                     <td className="flex gap-2 py-3">
-                      <button onClick={() => { setSelected(m.member_id); setForm({ ...blank, ...m }) }} className="text-primary">Edit</button>
+                      <button onClick={() => { setSelected(m.member_id); setForm({ ...blank, ...m, photo: m.photo || '' }) }} className="text-primary">Edit</button>
                       <button onClick={() => window.print()} className="text-slate-600"><Printer size={16} /></button>
                       <button onClick={() => remove(m.member_id)} className="text-rose-600"><Trash2 size={16} /></button>
                     </td>
@@ -60,18 +80,27 @@ export default function Members() {
         <Card>
           <h3 className="mb-4 font-semibold">{selected ? `Update ${selected}` : 'New Member'}</h3>
           <Section title="Personal Details" fields={['name', 'father_name', 'mother_name', 'gender', 'dob', 'age']} form={form} setForm={setForm} />
-          <Section title="Government Details" fields={['aadhaar_no', 'pan_no']} form={form} setForm={setForm} />
+          <Section title="Government Details" fields={['aadhaar_no', 'pan_no', 'others']} form={form} setForm={setForm} />
           <Section title="Medical Information" fields={['blood_group', 'allergies', 'medical_conditions', 'disability', 'medications']} form={form} setForm={setForm} />
           <Section title="Contact Details" fields={['phone', 'emergency_name', 'emergency_phone', 'relationship']} form={form} setForm={setForm} />
           <Section title="Address" fields={['plot_number', 'street', 'area', 'village', 'taluk', 'district', 'state', 'pincode']} form={form} setForm={setForm} />
           <Section title="Trust Information" fields={['admission_date', 'room_number', 'guardian', 'education', 'occupation', 'current_status']} form={form} setForm={setForm} />
+          <Field label="Member Photo">
+            <input className={inputClass} type="file" accept="image/*" onChange={handlePhotoChange} />
+            {form.photo ? (
+              <div className="mt-2 flex items-center gap-2">
+                <img src={form.photo} alt="Member preview" className="h-24 w-24 rounded object-cover border border-slate-200" />
+                <button type="button" onClick={removePhoto} className="rounded border border-rose-200 px-2 py-1 text-sm text-rose-600 hover:bg-rose-50">Remove</button>
+              </div>
+            ) : null}
+          </Field>
           <Field label="Documents"><input className={inputClass} type="file" multiple /></Field>
           <Field label="Notes"><textarea className={textareaClass} value={form.notes || ''} onChange={(e) => setForm({ ...form, notes: e.target.value })} /></Field>
           {selected && <div className="my-4 rounded border border-slate-200 p-3"><QrCode size={18} className="mb-2" /><QRCodeCanvas value={`${window.location.origin}/members/${selected}`} size={96} /></div>}
           <div className="mt-4 flex flex-wrap gap-2">
             <Button onClick={save}><Save size={16} className="mr-2 inline" />Save</Button>
             <Button onClick={save} variant="secondary">Update</Button>
-            <Button onClick={() => { setForm(blank); setSelected(null) }} variant="secondary">Reset</Button>
+            <Button onClick={() => { setForm({ ...blank }); setSelected(null) }} variant="secondary">Reset</Button>
             <Button onClick={() => window.print()} variant="secondary">Print ID Card</Button>
           </div>
         </Card>

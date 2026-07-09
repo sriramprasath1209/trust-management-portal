@@ -96,6 +96,22 @@ class Staff(Base):
     salary: Mapped[float | None] = mapped_column(Float, nullable=True)
     attendance: Mapped[str] = mapped_column(String(20), default="Present")
 
+    attendance_records: Mapped[list["StaffAttendance"]] = orm_relationship(back_populates="staff", cascade="all, delete-orphan")
+
+
+class StaffAttendance(Base):
+    __tablename__ = "staff_attendance"
+
+    id: Mapped[int] = mapped_column(Integer, primary_key=True, index=True)
+    staff_id: Mapped[str] = mapped_column(String(30), ForeignKey("staff.staff_id"), index=True)
+    date: Mapped[date] = mapped_column(Date, index=True)
+    time: Mapped[str | None] = mapped_column(String(10), nullable=True)
+    status: Mapped[str] = mapped_column(String(20), default="Present")
+    remarks: Mapped[str | None] = mapped_column(Text, nullable=True)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utcnow)
+
+    staff: Mapped[Staff] = orm_relationship(back_populates="attendance_records")
+
 
 class Visitor(Base):
     __tablename__ = "visitors"

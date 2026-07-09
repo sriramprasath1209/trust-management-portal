@@ -11,8 +11,26 @@ export default function Reports() {
   const [format, setFormat] = useState('json')
   const [result, setResult] = useState(null)
   async function generate() {
-    const { data } = await api.get(`/reports/${type}`, { params: { export: format } })
-    setResult(data)
+    try {
+      const response = await api.get(`/reports/${type}`, {
+        params: { export: format },
+        responseType: 'blob',
+      })
+      const contentType = response.headers['content-type'] || 'application/octet-stream'
+      const blob = new Blob([response.data], { type: contentType })
+      const url = window.URL.createObjectURL(blob)
+      const link = document.createElement('a')
+      link.href = url
+      const extension = format === 'json' ? 'json' : format === 'csv' ? 'csv' : format === 'excel' ? 'xls' : 'pdf'
+      link.download = `${type}.${extension}`
+      document.body.appendChild(link)
+      link.click()
+      link.remove()
+      window.URL.revokeObjectURL(url)
+      setResult({ message: `${format.toUpperCase()} report downloaded`, file: link.download })
+    } catch (error) {
+      setResult({ error: 'Unable to generate report' })
+    }
   }
   return (
     <>

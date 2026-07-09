@@ -90,7 +90,7 @@ export default function Layout() {
               </div>
               <div>
                 <p className="text-xs font-medium uppercase text-primary">Trust Portal</p>
-                <p className="font-semibold text-slate-900 dark:text-white">SUKI Home Trust</p>
+                <p className="font-semibold text-slate-900 dark:text-white">SUKI HOMES TRUST</p>
               </div>
             </div>
           </div>
