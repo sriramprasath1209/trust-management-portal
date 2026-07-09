@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 from datetime import date, datetime
 
 from pydantic import BaseModel, ConfigDict, EmailStr
@@ -98,26 +100,6 @@ class AttendanceRead(AttendanceBase):
     member: MemberRead | None = None
 
 
-class StaffAttendanceBase(BaseModel):
-    staff_id: str
-    date: date
-    time: str | None = None
-    status: str
-    remarks: str | None = None
-
-
-class StaffAttendanceCreate(StaffAttendanceBase):
-    pass
-
-
-class StaffAttendanceRead(StaffAttendanceBase):
-    model_config = ConfigDict(from_attributes=True)
-
-    id: int
-    created_at: datetime
-    staff: StaffRead | None = None
-
-
 class StaffBase(BaseModel):
     staff_id: str | None = None
     name: str
@@ -139,6 +121,26 @@ class StaffRead(StaffBase):
 
     id: int
     staff_id: str
+
+
+class StaffAttendanceBase(BaseModel):
+    staff_id: str
+    date: date
+    time: str | None = None
+    status: str
+    remarks: str | None = None
+
+
+class StaffAttendanceCreate(StaffAttendanceBase):
+    pass
+
+
+class StaffAttendanceRead(StaffAttendanceBase):
+    model_config = ConfigDict(from_attributes=True)
+
+    id: int
+    created_at: datetime
+    staff: StaffRead | None = None
 
 
 class VisitorBase(BaseModel):
@@ -176,3 +178,4 @@ class DashboardStats(BaseModel):
 
 
 Token.model_rebuild()
+StaffAttendanceRead.model_rebuild()

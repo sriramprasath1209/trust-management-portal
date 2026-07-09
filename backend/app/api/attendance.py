@@ -6,8 +6,8 @@ from sqlalchemy.orm import Session
 
 from app.api.deps import get_current_admin
 from app.db.session import get_db
-from app.models.entities import ActivityLog, Admin, Attendance, Member, Staff, StaffAttendance
-from app.schemas.common import AttendanceCreate, AttendanceRead, StaffAttendanceCreate, StaffAttendanceRead
+from app.models.entities import ActivityLog, Admin, Attendance, Member
+from app.schemas.common import AttendanceCreate, AttendanceRead
 
 
 router = APIRouter(prefix="/attendance", tags=["Attendance"], dependencies=[Depends(get_current_admin)])
@@ -40,79 +40,6 @@ def search_members(q: str, db: Session = Depends(get_db)):
         {"photo": m.photo, "name": m.name, "member_id": m.member_id, "room_number": m.room_number}
         for m in members
     ]
-
-
-@router.get("/search-staff", response_model=list[dict])
-def search_staff(q: str, db: Session = Depends(get_db)):
-    like = f"%{q}%"
-    staff = (
-        db.query(Staff)
-        .filter(or_(Staff.name.ilike(like), Staff.staff_id.ilike(like), Staff.position.ilike(like)))
-        .limit(10)
-        .all()
-    )
-    return [{"name": item.name, "staff_id": item.staff_id, "position": item.position, "phone": item.phone} for item in staff]
-
-
-@router.get("/staff", response_model=list[StaffAttendanceRead])
-def list_staff_attendance(
-    q: str | None = None,
-    filter: str = "today",
-    start_date: date | None = None,
-    end_date: date | None = None,
-    db: Session = Depends(get_db),
-):
-    query = db.query(StaffAttendance).join(Staff)
-    if q:
-        like = f"%{q}%"
-        query = query.filter(or_(Staff.name.ilike(like), Staff.staff_id.ilike(like), Staff.position.ilike(like)))
-    start, end = (start_date, end_date) if filter == "custom" else range_for_filter(filter)
-    if start:
-        query = query.filter(StaffAttendance.date >= start)
-    if end:
-        query = query.filter(StaffAttendance.date <= end)
-    return query.order_by(StaffAttendance.date.desc(), StaffAttendance.id.desc()).all()
-
-
-@router.post("/staff", response_model=StaffAttendanceRead)
-def save_staff_attendance(
-    payload: StaffAttendanceCreate,
-    db: Session = Depends(get_db),
-    admin: Admin = Depends(get_current_admin),
-):
-    if not db.query(Staff).filter(Staff.staff_id == payload.staff_id).first():
-        raise HTTPException(status_code=404, detail="Staff not found")
-    existing = (
-        db.query(StaffAttendance)
-        .filter(StaffAttendance.staff_id == payload.staff_id, StaffAttendance.date == payload.date)
-        .first()
-    )
-    if existing:
-        for key, value in payload.model_dump().items():
-            setattr(existing, key, value)
-        attendance = existing
-    else:
-        attendance = StaffAttendance(**payload.model_dump())
-        db.add(attendance)
-    db.add(ActivityLog(admin_username=admin.username, action=f"Saved staff attendance {payload.staff_id}", entity="Attendance"))
-    db.commit()
-    db.refresh(attendance)
-    return attendance
-
-
-@router.delete("/staff/{attendance_id}")
-def delete_staff_attendance(
-    attendance_id: int,
-    db: Session = Depends(get_db),
-    admin: Admin = Depends(get_current_admin),
-):
-    attendance = db.get(StaffAttendance, attendance_id)
-    if not attendance:
-        raise HTTPException(status_code=404, detail="Staff attendance not found")
-    db.delete(attendance)
-    db.add(ActivityLog(admin_username=admin.username, action=f"Deleted staff attendance {attendance_id}", entity="Attendance"))
-    db.commit()
-    return {"message": "Staff attendance deleted"}
 
 
 @router.get("", response_model=list[AttendanceRead])
