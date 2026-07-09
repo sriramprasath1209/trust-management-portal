@@ -11,10 +11,10 @@ class Settings(BaseSettings):
     algorithm: str = "HS256"
     access_token_expire_minutes: int = 480
 
-    # Allow both local development and your deployed Vercel frontend
     backend_cors_origins: str = Field(
-        default="http://localhost:5173,http://127.0.0.1:5173,https://trust-management-portal.vercel.app"
+        default="http://localhost:5173,http://127.0.0.1:5173"
     )
+    cors_origin_regex: str | None = Field(default=r"https://.*\.vercel\.app")
 
     @property
     def cors_origins(self) -> list[str]:
