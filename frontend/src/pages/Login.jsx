@@ -31,7 +31,7 @@ export default function Login() {
             </div>
             <div>
               <p className="text-sm text-blue-100">Secure Admin Portal</p>
-              <h1 className="text-2xl font-bold">SUKI Home Trust</h1>
+              <h1 className="text-2xl font-bold">SUKI HOMES TRUST</h1>
             </div>
           </div>
           <div>
