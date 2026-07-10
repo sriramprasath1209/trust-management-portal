@@ -27,7 +27,7 @@ export default function Login() {
         <div className="flex min-h-[520px] flex-col justify-between bg-primary p-8 text-white">
           <div className="flex items-center gap-3">
             <div className="grid h-14 w-14 place-items-center rounded bg-white p-1.5 shadow-sm">
-              <img src="/assets/suki-trust-logo.png" alt="SUKI Home Trust logo" className="h-full w-full object-contain -rotate-90" />
+              <img src="/assets/suki-trust-logo.png" alt="SUKI Home Trust logo" className="h-full w-full object-contain" />
             </div>
             <div>
               <p className="text-sm text-blue-100">Secure Admin Portal</p>
@@ -40,7 +40,7 @@ export default function Login() {
         </div>
         <form onSubmit={submit} className="flex flex-col justify-center gap-5 p-8">
           <div>
-            <h2 className="text-2xl font-bold text-slate-950">Administrator Login</h2>
+            <h2 className="text-2xl font-bold text-slate-950">SUKI HOMES TRUST</h2>
             <p className="mt-1 text-sm text-slate-500">JWT protected access for active administrators.</p>
           </div>
           <Field label="Username">
