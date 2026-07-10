@@ -25,8 +25,8 @@ export default function Login() {
     <main className="grid min-h-screen bg-[#edf5ff] px-4 py-8">
       <section className="mx-auto grid w-full max-w-5xl overflow-hidden rounded border border-blue-100 bg-white shadow-soft md:grid-cols-[1fr_420px]">
         <div className="flex min-h-[520px] flex-col justify-between bg-primary p-8 text-white">
-          <div className="flex items-center gap-3">
-            <div className="grid h-14 w-14 place-items-center rounded bg-white p-1.5 shadow-sm">
+          <div className="flex items-start gap-3">
+            <div className="mt-1 grid h-14 w-14 place-items-center rounded bg-white p-1.5 shadow-sm">
               <img src="/assets/suki-trust-logo.png" alt="SUKI Home Trust logo" className="h-full w-full object-contain" />
             </div>
             <div>
