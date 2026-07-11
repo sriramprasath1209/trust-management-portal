@@ -48,7 +48,7 @@ export default function Layout() {
       <aside className={`fixed inset-y-0 left-0 z-40 w-72 bg-sidebar text-white transition-transform lg:translate-x-0 ${open ? 'translate-x-0' : '-translate-x-full'}`}>
         <div className="flex h-16 items-center gap-3 border-b border-white/10 px-5">
           <div className="grid h-10 w-10 place-items-center rounded bg-white p-1 shadow-sm">
-            <img src="/assets/suki-trust-logo.png" alt="SUKI Home Trust logo" className="h-full w-full object-contain -rotate-90" />
+            <img src="/assets/suki-trust-logo.png" alt="SUKI Home Trust logo" className="h-full w-full object-contain" />
           </div>
           <div>
             <p className="text-sm text-blue-100">SUKI Home Trust</p>
@@ -86,7 +86,7 @@ export default function Layout() {
             </button>
             <div className="hidden items-center gap-3 sm:flex">
               <div className="grid h-9 w-9 place-items-center rounded border border-blue-100 bg-white p-1 shadow-sm dark:border-slate-700">
-                <img src="/assets/suki-trust-logo.png" alt="SUKI Home Trust logo" className="h-full w-full object-contain -rotate-90" />
+                <img src="/assets/suki-trust-logo.png" alt="SUKI Home Trust logo" className="h-full w-full object-contain" />
               </div>
               <div>
                 <p className="text-xs font-medium uppercase text-primary">Trust Portal</p>
